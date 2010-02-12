@@ -161,6 +161,7 @@ class PingbackServer extends IXR_Server
     		if (true) {
     		    $rdfData = trim($result);
     		    require_once 'Erfurt/Syntax/RdfParser.php';
+    		    require_once 'Erfurt/Syntax/RdfParserException.php';
         	    $parser = Erfurt_Syntax_RdfParser::rdfParserWithFormat('rdfxml');
         	    try {
         	        $triples = $parser->parse($target, Erfurt_Syntax_RdfParser::LOCATOR_DATASTRING);

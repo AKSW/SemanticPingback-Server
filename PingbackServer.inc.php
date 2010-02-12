@@ -210,7 +210,7 @@ class PingbackServer extends IXR_Server
                 
                 mail($mail, 'Pingback requested', $text, $headers);
             } else {
-                mail('pfrischmuth@googlemail.com', 'test', serialize($triples));
+                mail('pfrischmuth@googlemail.com', 'test', serialize($result));
             }
         }
        

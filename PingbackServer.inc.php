@@ -5,6 +5,8 @@ $includePath  = get_include_path() . PATH_SEPARATOR;
 $includePath .= str_replace('index.php', '', $_SERVER['SCRIPT_FILENAME']) . 'libraries/' . PATH_SEPARATOR;
 set_include_path($includePath);
 
+require_once 'libraries/Erfurt/include/vocabulary.php';
+
 class PingbackServer extends IXR_Server 
 {
     var $methods = array();

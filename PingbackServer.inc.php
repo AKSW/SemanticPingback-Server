@@ -161,6 +161,8 @@ class PingbackServer extends IXR_Server
     		if (($info['http_code'] === 200) && ($info['content_type'] === 'application/rdf+xml')) {
     		    $rdfData = $result;
     		    require_once 'Erfurt/Syntax/RdfParser.php';
+    		    require_once 'Erfurt/Syntax/RdfParser/Adapter/RdfXml.php';
+    		    require_once 'Erfurt/Syntax/RdfParser/Adapter/Interface.php';
     		    require_once 'Erfurt/Syntax/RdfParserException.php';
         	    $parser = Erfurt_Syntax_RdfParser::rdfParserWithFormat('rdfxml');
         	    try {

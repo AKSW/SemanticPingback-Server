@@ -156,6 +156,7 @@ class PingbackServer extends IXR_Server
     		$info = curl_getinfo($curl);
     		curl_close($curl);
     		$mail = null;
+    		$name = null;
     		if (($info['http_code'] === 200) && (strtolower($info['content_type']) === 'application/rdf+xml')) {
     		    $rdfData = $result;
     		    $triples = $this->_getPingbackTriplesFromRdfXmlString($rdfData, $source, $target);
@@ -164,8 +165,13 @@ class PingbackServer extends IXR_Server
                         $pArray = $triples[$target];
                         foreach ($pArray as $p => $oArray) {
                             if ($p === 'http://xmlns.com/foaf/0.1/mbox') {
-                                $mail = $oArray[0]['value'];
-                                break;
+                                if ($mail === null) {
+                                    $mail = $oArray[0]['value'];
+                                }
+                            } else if ($p === 'http://xmlns.com/foaf/0.1/name') {
+                                    if ($name === null) {
+                                        $name = $oArray[0]['value'];
+                                    }
                             }
                         }
                     }
@@ -178,16 +184,22 @@ class PingbackServer extends IXR_Server
                 $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
 
                 // Additional headers
-                //$headers .= 'To: Mary <mary@example.com>, Kelly <kelly@example.com>' . "\r\n";
-                $headers .= 'From: AKSW Pingback Service' . "\r\n";
+                $to = '';
+                if ($name !== null) {
+                    $to .= $name . ' ';
+                }
+                $to .= '<'. $mail . '>';
+                
+                $headers .= 'To: ' . $to . "\r\n";
+                $headers .= 'From: AKSW Pingback Service <noreply@aksw.informatik.uni-leipzig.de>' . "\r\n";
                 //$headers .= 'Cc: birthdayarchive@example.com' . "\r\n";
                 //$headers .= 'Bcc: birthdaycheck@example.com' . "\r\n";
                 
                 
-                $text = 'Hi, ' . PHP_EOL . PHP_EOL . ' new link(s) were established to <a href="' . $target. '">' .
-                $target . '</a> by <a href="' . $source . '">' . $source . '</a>';
+                $text = 'Hi, ' . PHP_EOL . PHP_EOL . ' a Pingback was requested with target <a href="' . $target. '"><pre>' .
+                $target . '</pre></a> and source <a href="' . $source . '"><pre>' . $source . '</pre></a>.' . PHP_EOL . PHP_EOL . 'Yours, AKSW';
                 
-                mail($mail, 'New Link to you established.', $text, $headers);
+                mail($mail, 'Pingback requested', $text, $headers);
             }
         }
        

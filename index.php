@@ -22,7 +22,7 @@ $config = array(
     'mail' => true
 );
 
-$db=mysql_connect('localhost','root','softwiki');
+$db=mysql_connect('localhost','user','pw');
 mysql_select_db('pingbacks');
 
 $server = new PingbackServer($db, $config);

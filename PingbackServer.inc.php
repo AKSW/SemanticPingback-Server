@@ -212,9 +212,11 @@ class PingbackServer extends IXR_Server
                 $text = 'Hi, ' . PHP_EOL . PHP_EOL . ' a Pingback was requested with target <a href="' . $target. '"><pre>' .
                 $target . '</pre></a> and source <a href="' . $source . '"><pre>' . $source . '</pre></a>' . PHP_EOL . PHP_EOL . 'Yours, AKSW';
                 
-                $text .= $mail . ' ' . $name;
+                if (substr($mail, 0, 7) === 'mailto:') {
+                    $mail = substr($mail, 7);
+                }
                 
-                mail('pfrischmuth@googlemail.com', 'Pingback requested', $text, $headers);
+                mail($mail, 'Pingback requested', $text, $headers);
             } else {
                 mail('pfrischmuth@googlemail.com', 'test', serialize($triples));
             }

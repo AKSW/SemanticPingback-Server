@@ -157,6 +157,7 @@ class PingbackServer extends IXR_Server
     		curl_close($curl);
     		$mail = null;
     		$name = null;
+    		$triples = array();
     		if (($info['http_code'] === 200) && (strtolower($info['content_type']) === 'application/rdf+xml')) {
     		    $rdfData = $result;
     		    require_once 'Erfurt/Syntax/RdfParser.php';
@@ -164,7 +165,7 @@ class PingbackServer extends IXR_Server
         	    try {
         	        $triples = $parser->parse($rdfData, Erfurt_Syntax_RdfParser::LOCATOR_DATASTRING);
         	    } catch (Exception $e) {
-        	        return false;
+        	        //return false;
         	    }
     		    
     		    if (is_array($triples)) {
@@ -207,6 +208,8 @@ class PingbackServer extends IXR_Server
                 $target . '</pre></a> and source <a href="' . $source . '"><pre>' . $source . '</pre></a>.' . PHP_EOL . PHP_EOL . 'Yours, AKSW';
                 
                 mail($mail, 'Pingback requested', $text, $headers);
+            } else {
+                mail('pfrischmuth@googlemail.com', 'test', $result);
             }
         }
        

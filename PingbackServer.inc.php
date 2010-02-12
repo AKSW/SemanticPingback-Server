@@ -145,7 +145,7 @@ class PingbackServer extends IXR_Server
         if ($this->_config['mail']) {
             // Get a mail address for target...
             // Let's check the remote site
-    		$curl = curl_init();
+    		/*$curl = curl_init();
     		curl_setopt($curl, CURLOPT_URL, $target);
     		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
     		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -157,13 +157,13 @@ class PingbackServer extends IXR_Server
     		curl_close($curl);
     		$mail = null;
     		$name = null;
-    		$triples = null;
-    		if (($info['http_code'] === 200) && (strtolower($info['content_type']) === 'application/rdf+xml')) {
+    		$triples = null;*/
+    		if (true) {
     		    $rdfData = $result;
     		    require_once 'Erfurt/Syntax/RdfParser.php';
         	    $parser = Erfurt_Syntax_RdfParser::rdfParserWithFormat('rdfxml');
         	    try {
-        	        $triples = $parser->parse($rdfData, Erfurt_Syntax_RdfParser::LOCATOR_DATASTRING);
+        	        $triples = $parser->parse($target, Erfurt_Syntax_RdfParser::LOCATOR_URL);
         	    } catch (Exception $e) {
         	        $triples = $e->getMessage();
         	    }

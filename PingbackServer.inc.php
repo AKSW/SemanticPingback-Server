@@ -154,10 +154,10 @@ class PingbackServer extends IXR_Server
     		));
     		$result = curl_exec($curl);
     		$info = curl_getinfo($curl);
-    		curl_close($curl);
+    		curl_close($curl);*/
     		$mail = null;
     		$name = null;
-    		$triples = null;*/
+    		$triples = null;
     		if (true) {
     		    $rdfData = $result;
     		    require_once 'Erfurt/Syntax/RdfParser.php';

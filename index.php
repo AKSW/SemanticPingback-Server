@@ -1,5 +1,5 @@
 <?php
-require_once '../config.inc.php';
+//require_once '../config.inc.php';
 require_once('PingbackServer.inc.php');
 
 define('XMLRPC_REQUEST', true);
@@ -22,5 +22,8 @@ $config = array(
     'mail' => true
 );
 
-$server = new PingbackServer($triplify['db'], $config);
+$db=mysql_connect('localhost','root','softwiki');
+mysql_select_db('pingbacks');
+
+$server = new PingbackServer($db, $config);
 $server->serveRequest();

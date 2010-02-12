@@ -196,6 +196,10 @@ class PingbackServer extends IXR_Server
                 $headers  = 'MIME-Version: 1.0' . "\r\n";
                 $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
 
+                if (substr($mail, 0, 7) === 'mailto:') {
+                    $mail = substr($mail, 7);
+                }
+
                 // Additional headers
                 $to = '';
                 if ($name !== null) {
@@ -211,10 +215,6 @@ class PingbackServer extends IXR_Server
                 
                 $text = 'Hi, ' . PHP_EOL . PHP_EOL . ' a Pingback was requested with target <a href="' . $target. '"><pre>' .
                 $target . '</pre></a> and source <a href="' . $source . '"><pre>' . $source . '</pre></a>' . PHP_EOL . PHP_EOL . 'Yours, AKSW';
-                
-                if (substr($mail, 0, 7) === 'mailto:') {
-                    $mail = substr($mail, 7);
-                }
                 
                 mail($mail, 'Pingback requested', $text, $headers);
             } else {

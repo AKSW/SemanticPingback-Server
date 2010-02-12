@@ -185,6 +185,54 @@ class PingbackServer extends IXR_Server
                                     if ($name === null) {
                                         $name = $oArray[0]['value'];
                                     }
+                            } else if ($p === 'http://xmlns.com/foaf/0.1/maker') {
+                                $v = $oArray[0]['value'];
+                                if (isset($triples[$v])) {
+                                    $pArray2 = $triples[$v];
+                                    foreach ($pArray2 as $p2 => $oArray2) {
+                                        if ($p2 === 'http://xmlns.com/foaf/0.1/mbox') {
+                                            if ($mail === null) {
+                                                $mail = $oArray2[0]['value'];
+                                            }
+                                        } else if ($p2 === 'http://xmlns.com/foaf/0.1/name') {
+                                                if ($name === null) {
+                                                    $name = $oArray2[0]['value'];
+                                                }
+                                        }
+                                    }
+                                }
+                            } else if ($p === 'http://rdfs.org/sioc/ns#has_creator') {
+                                $v = $oArray[0]['value'];
+                                if (isset($triples[$v])) {
+                                    $pArray2 = $triples[$v];
+                                    foreach ($pArray2 as $p2 => $oArray2) {
+                                        if ($p2 === 'http://xmlns.com/foaf/0.1/mbox') {
+                                            if ($mail === null) {
+                                                $mail = $oArray2[0]['value'];
+                                            }
+                                        } else if ($p2 === 'http://xmlns.com/foaf/0.1/name') {
+                                            if ($name === null) {
+                                                $name = $oArray2[0]['value'];
+                                            }
+                                        }
+                                    }
+                                }
+                            } else if ($p === 'http://purl.org/dc/terms/creator') {
+                                $v = $oArray[0]['value'];
+                                if (isset($triples[$v])) {
+                                    $pArray2 = $triples[$v];
+                                    foreach ($pArray2 as $p2 => $oArray2) {
+                                        if ($p2 === 'http://xmlns.com/foaf/0.1/mbox') {
+                                            if ($mail === null) {
+                                                $mail = $oArray2[0]['value'];
+                                            }
+                                        } else if ($p2 === 'http://xmlns.com/foaf/0.1/name') {
+                                            if ($name === null) {
+                                                $name = $oArray2[0]['value'];
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }

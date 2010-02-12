@@ -6,6 +6,7 @@ $includePath .= str_replace('index.php', '', $_SERVER['SCRIPT_FILENAME']) . 'lib
 set_include_path($includePath);
 
 require_once 'libraries/Erfurt/include/vocabulary.php';
+require_once 'Erfurt/App.php';
 
 class PingbackServer extends IXR_Server 
 {

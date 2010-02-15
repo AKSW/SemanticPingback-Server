@@ -129,7 +129,7 @@ class PingbackServer extends IXR_Server
         if (count($foundPingbackTriples) === 0) {    
             $sql = 'DELETE FROM triplify_pingbacks WHERE s="' . $source . '" AND o="' . $target . '"';
             $this->_query($sql);
-            $this->_sendMail($target, true);
+            $this->_sendMail($target, $source, true);
             
             return new IXR_Error(0x0011, 'No links in source document.');
 		}
@@ -148,7 +148,7 @@ class PingbackServer extends IXR_Server
             return new IXR_Error(0x0030, 'Already exists.');
         }
        
-        $this->_sendMail($target);
+        $this->_sendMail($target, $source);
         
         return 'Pingback registered.';
 	}
@@ -250,7 +250,7 @@ class PingbackServer extends IXR_Server
 	    return $returnValue;
 	}
 	
-	function _sendMail($target, $removed = false)
+	function _sendMail($target, $source, $removed = false)
 	{
 	    if ($this->_config['mail']) {
             // Get a mail address for target...

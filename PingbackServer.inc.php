@@ -129,6 +129,7 @@ class PingbackServer extends IXR_Server
         if (count($foundPingbackTriples) === 0) {    
             $sql = 'DELETE FROM triplify_pingbacks WHERE s="' . $source . '" AND o="' . $target . '"';
             $this->_query($sql);
+            $this->_sendMail($target, true);
             
             return new IXR_Error(0x0011, 'No links in source document.');
 		}
@@ -147,147 +148,8 @@ class PingbackServer extends IXR_Server
             return new IXR_Error(0x0030, 'Already exists.');
         }
        
-        if ($this->_config['mail']) {
-            // Get a mail address for target...
-            // Let's check the remote site
-    		$curl = curl_init();
-    		curl_setopt($curl, CURLOPT_URL, $target);
-    		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
-    		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-    		curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-    		    'Accept: application/rdf+xml'
-    		));
-    		$result = curl_exec($curl);
-    		$info = curl_getinfo($curl);
-    		curl_close($curl);
-    		$mail = null;
-    		$name = null;
-    		$triples = null;
-    		if (($info['http_code'] === 200) && ($info['content_type'] === 'application/rdf+xml')) {
-    		    require_once 'Erfurt/Syntax/RdfParser.php';
-    		    require_once 'Erfurt/Syntax/RdfParser/Adapter/RdfXml.php';
-    		    require_once 'Erfurt/Syntax/RdfParser/Adapter/Interface.php';
-    		    require_once 'Erfurt/Syntax/RdfParserException.php';
-        	    $parser = Erfurt_Syntax_RdfParser::rdfParserWithFormat('rdfxml');
-        	    try {
-        	        $triples = $parser->parse($result, Erfurt_Syntax_RdfParser::LOCATOR_DATASTRING);
-        	    } catch (Exception $e) {
-        	        $triples = $e->getMessage();
-        	    }
-    		    
-    		    if (is_array($triples)) {
-                    if (isset($triples[$target])) {
-                        $pArray = $triples[$target];
-                        foreach ($pArray as $p => $oArray) {
-                            if ($p === 'http://xmlns.com/foaf/0.1/mbox') {
-                                if ($mail === null) {
-                                    $mail = $oArray[0]['value'];
-                                }
-                            } else if ($p === 'http://xmlns.com/foaf/0.1/name') {
-                                    if ($name === null) {
-                                        $name = $oArray[0]['value'];
-                                    }
-                            } else if ($p === 'http://xmlns.com/foaf/0.1/maker') {
-                                $v = $oArray[0]['value'];
-                                if (isset($triples[$v])) {
-                                    $pArray2 = $triples[$v];
-                                    foreach ($pArray2 as $p2 => $oArray2) {
-                                        if ($p2 === 'http://xmlns.com/foaf/0.1/mbox') {
-                                            if ($mail === null) {
-                                                $mail = $oArray2[0]['value'];
-                                            }
-                                        } else if ($p2 === 'http://xmlns.com/foaf/0.1/name') {
-                                                if ($name === null) {
-                                                    $name = $oArray2[0]['value'];
-                                                }
-                                        }
-                                    }
-                                }
-                            } else if ($p === 'http://rdfs.org/sioc/ns#has_creator') {
-                                $v = $oArray[0]['value'];
-                                if (isset($triples[$v])) {
-                                    $pArray2 = $triples[$v];
-                                    foreach ($pArray2 as $p2 => $oArray2) {
-                                        if ($p2 === 'http://xmlns.com/foaf/0.1/mbox') {
-                                            if ($mail === null) {
-                                                $mail = $oArray2[0]['value'];
-                                            }
-                                        } else if ($p2 === 'http://xmlns.com/foaf/0.1/name') {
-                                            if ($name === null) {
-                                                $name = $oArray2[0]['value'];
-                                            }
-                                        }
-                                    }
-                                }
-                            } else if ($p === 'http://purl.org/dc/terms/creator') {
-                                $v = $oArray[0]['value'];
-                                if (isset($triples[$v])) {
-                                    $pArray2 = $triples[$v];
-                                    foreach ($pArray2 as $p2 => $oArray2) {
-                                        if ($p2 === 'http://xmlns.com/foaf/0.1/mbox') {
-                                            if ($mail === null) {
-                                                $mail = $oArray2[0]['value'];
-                                            }
-                                        } else if ($p2 === 'http://xmlns.com/foaf/0.1/name') {
-                                            if ($name === null) {
-                                                $name = $oArray2[0]['value'];
-                                            }
-                                        }
-                                    }
-                                }
-                            } else if ($p === 'http://rdfs.org/sioc/ns#has_owner') {
-                                $v = $oArray[0]['value'];
-                                if (isset($triples[$v])) {
-                                    $pArray2 = $triples[$v];
-                                    foreach ($pArray2 as $p2 => $oArray2) {
-                                        if ($p2 === 'http://xmlns.com/foaf/0.1/mbox') {
-                                            if ($mail === null) {
-                                                $mail = $oArray2[0]['value'];
-                                            }
-                                        } else if ($p2 === 'http://xmlns.com/foaf/0.1/name') {
-                                            if ($name === null) {
-                                                $name = $oArray2[0]['value'];
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-    		}
-            
-            if ($mail !== null) {
-                // To send HTML mail, the Content-type header must be set
-                $headers  = 'MIME-Version: 1.0' . "\r\n";
-                $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-
-                if (substr($mail, 0, 7) === 'mailto:') {
-                    $mail = substr($mail, 7);
-                }
-
-                // Additional headers
-                $to = '';
-                if ($name !== null) {
-                    $to .= $name . ' ';
-                }
-                $to .= '<'. $mail . '>';
-                
-                $headers .= 'To: ' . $to . "\r\n";
-                $headers .= 'From: AKSW Pingback Service <noreply@aksw.informatik.uni-leipzig.de>' . "\r\n";
-                //$headers .= 'Cc: birthdayarchive@example.com' . "\r\n";
-                //$headers .= 'Bcc: birthdaycheck@example.com' . "\r\n";
-                
-                
-                $text = 'Hi, ' . PHP_EOL . PHP_EOL . ' a Pingback was requested with target <a href="' . $target. '"><pre>' .
-                $target . '</pre></a> and source <a href="' . $source . '"><pre>' . $source . '</pre></a>' . PHP_EOL . PHP_EOL . 'Yours, AKSW';
-                
-                mail($mail, 'Pingback requested', $text, $headers);
-            } else {
-                mail('pfrischmuth@googlemail.com', 'test', serialize($triples));
-            }
-        }
-       
+        $this->_sendMail($target);
+        
         return 'Pingback registered.';
 	}
 	
@@ -396,5 +258,152 @@ class PingbackServer extends IXR_Server
 	    }
 	    
 	    return $returnValue;
+	}
+	
+	function _sendMail($target, $removed = false)
+	{
+	    if ($this->_config['mail']) {
+            // Get a mail address for target...
+            // Let's check the remote site
+    		$curl = curl_init();
+    		curl_setopt($curl, CURLOPT_URL, $target);
+    		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+    		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+    		curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+    		    'Accept: application/rdf+xml'
+    		));
+    		$result = curl_exec($curl);
+    		$info = curl_getinfo($curl);
+    		curl_close($curl);
+    		$mail = null;
+    		$name = null;
+    		$triples = null;
+    		if (($info['http_code'] === 200) && ($info['content_type'] === 'application/rdf+xml')) {
+    		    require_once 'Erfurt/Syntax/RdfParser.php';
+    		    require_once 'Erfurt/Syntax/RdfParser/Adapter/RdfXml.php';
+    		    require_once 'Erfurt/Syntax/RdfParser/Adapter/Interface.php';
+    		    require_once 'Erfurt/Syntax/RdfParserException.php';
+        	    $parser = Erfurt_Syntax_RdfParser::rdfParserWithFormat('rdfxml');
+        	    try {
+        	        $triples = $parser->parse($result, Erfurt_Syntax_RdfParser::LOCATOR_DATASTRING);
+        	    } catch (Exception $e) {
+        	    }
+    		    
+    		    if (is_array($triples)) {
+                    if (isset($triples[$target])) {
+                        $pArray = $triples[$target];
+                        foreach ($pArray as $p => $oArray) {
+                            if ($p === 'http://xmlns.com/foaf/0.1/mbox') {
+                                if ($mail === null) {
+                                    $mail = $oArray[0]['value'];
+                                }
+                            } else if ($p === 'http://xmlns.com/foaf/0.1/name') {
+                                    if ($name === null) {
+                                        $name = $oArray[0]['value'];
+                                    }
+                            } else if ($p === 'http://xmlns.com/foaf/0.1/maker') {
+                                $v = $oArray[0]['value'];
+                                if (isset($triples[$v])) {
+                                    $pArray2 = $triples[$v];
+                                    foreach ($pArray2 as $p2 => $oArray2) {
+                                        if ($p2 === 'http://xmlns.com/foaf/0.1/mbox') {
+                                            if ($mail === null) {
+                                                $mail = $oArray2[0]['value'];
+                                            }
+                                        } else if ($p2 === 'http://xmlns.com/foaf/0.1/name') {
+                                                if ($name === null) {
+                                                    $name = $oArray2[0]['value'];
+                                                }
+                                        }
+                                    }
+                                }
+                            } else if ($p === 'http://rdfs.org/sioc/ns#has_creator') {
+                                $v = $oArray[0]['value'];
+                                if (isset($triples[$v])) {
+                                    $pArray2 = $triples[$v];
+                                    foreach ($pArray2 as $p2 => $oArray2) {
+                                        if ($p2 === 'http://xmlns.com/foaf/0.1/mbox') {
+                                            if ($mail === null) {
+                                                $mail = $oArray2[0]['value'];
+                                            }
+                                        } else if ($p2 === 'http://xmlns.com/foaf/0.1/name') {
+                                            if ($name === null) {
+                                                $name = $oArray2[0]['value'];
+                                            }
+                                        }
+                                    }
+                                }
+                            } else if ($p === 'http://purl.org/dc/terms/creator') {
+                                $v = $oArray[0]['value'];
+                                if (isset($triples[$v])) {
+                                    $pArray2 = $triples[$v];
+                                    foreach ($pArray2 as $p2 => $oArray2) {
+                                        if ($p2 === 'http://xmlns.com/foaf/0.1/mbox') {
+                                            if ($mail === null) {
+                                                $mail = $oArray2[0]['value'];
+                                            }
+                                        } else if ($p2 === 'http://xmlns.com/foaf/0.1/name') {
+                                            if ($name === null) {
+                                                $name = $oArray2[0]['value'];
+                                            }
+                                        }
+                                    }
+                                }
+                            } else if ($p === 'http://rdfs.org/sioc/ns#has_owner') {
+                                $v = $oArray[0]['value'];
+                                if (isset($triples[$v])) {
+                                    $pArray2 = $triples[$v];
+                                    foreach ($pArray2 as $p2 => $oArray2) {
+                                        if ($p2 === 'http://xmlns.com/foaf/0.1/mbox') {
+                                            if ($mail === null) {
+                                                $mail = $oArray2[0]['value'];
+                                            }
+                                        } else if ($p2 === 'http://xmlns.com/foaf/0.1/name') {
+                                            if ($name === null) {
+                                                $name = $oArray2[0]['value'];
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+    		}
+            
+            if ($mail !== null) {
+                // To send HTML mail, the Content-type header must be set
+                $headers  = 'MIME-Version: 1.0' . "\r\n";
+                $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+
+                if (substr($mail, 0, 7) === 'mailto:') {
+                    $mail = substr($mail, 7);
+                }
+
+                // Additional headers
+                $to = '';
+                if ($name !== null) {
+                    $to .= $name . ' ';
+                }
+                $to .= '<'. $mail . '>';
+                
+                $headers .= 'To: ' . $to . "\r\n";
+                $headers .= 'From: AKSW Pingback Service <noreply@aksw.informatik.uni-leipzig.de>' . "\r\n";
+                //$headers .= 'Cc: birthdayarchive@example.com' . "\r\n";
+                //$headers .= 'Bcc: birthdaycheck@example.com' . "\r\n";
+                
+                if ($removed) {
+                    $text = 'Hi, ' . PHP_EOL . PHP_EOL . ' a Pingback was removed with target <a href="' . $target. '"><pre>' .
+                    $target . '</pre></a> and source <a href="' . $source . '"><pre>' . $source . '</pre></a>' . PHP_EOL . PHP_EOL . 'Yours, AKSW';
+                    
+                    mail($mail, 'Pingback removed', $text, $headers);
+                } else {
+                    $text = 'Hi, ' . PHP_EOL . PHP_EOL . ' a Pingback was requested with target <a href="' . $target. '"><pre>' .
+                    $target . '</pre></a> and source <a href="' . $source . '"><pre>' . $source . '</pre></a>' . PHP_EOL . PHP_EOL . 'Yours, AKSW';
+                    
+                    mail($mail, 'Pingback requested', $text, $headers);
+                }
+            } 
+        }
 	}
 }

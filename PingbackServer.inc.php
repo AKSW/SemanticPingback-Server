@@ -175,17 +175,7 @@ class PingbackServer extends IXR_Server
                                 'o' => $oSpec['value']
                             );
                         }
-                    } else if (($oSpec['type'] === 'uri') && ($oSpec['value'] === $sourceUri)) {
-                        // Try to find inverse property for $p
-                        $inverseProp = $this->_determineInverseProperty($p);
-                        if ($inverseProp !== null) {
-                            $foundTriples[] = array(
-                                's' => $oSpec['value'],
-                                'p' => $inverseProp,
-                                'o' => $s
-                            );
-                        }
-                    }
+                    } 
                 }
             }
         }

@@ -127,30 +127,52 @@ class PingbackServer extends IXR_Server
 		}
 		
         if (count($foundPingbackTriples) === 0) {    
-            $sql = 'DELETE FROM triplify_pingbacks WHERE s="' . $source . '" AND o="' . $target . '"';
-            $this->_query($sql);
-            $this->_sendMail($target, $source, true);
+            $this->_deleteInvalidPingbacks($source, $target);
             
             return new IXR_Error(0x0011, 'No links in source document.');
 		}
 		
 		$added = false;
-		$addedStmts = array();
 		foreach ($foundPingbackTriples as $triple) {
 		    if (!$this->_pingbackExists($triple['s'], $triple['p'], $triple['o'])) {
 		        $this->_addPingback($triple['s'], $triple['p'], $triple['o']);
+		        $this->_sendMail($target, $source, $triple['p']);
 		        $added = true;
-		        $addedStmts[] = $triple;
 		    }
 		}
-// TODO remove old pingbacks	
+		
+		// remove old pingbacks
+		$this->_deleteInvalidPingbacks($source, $target, $foundPingbackTriples);
+			
 		if (!$added) {
             return new IXR_Error(0x0030, 'Already exists.');
         }
        
-        $this->_sendMail($target, $source);
+        
         
         return 'Pingback registered.';
+	}
+	
+	function _deleteInvalidPingbacks($source, $target, $foundPingbackTriples = array())
+	{
+	    $sql = 'SELECT id, s, p, o FROM triplify_pingbacks WHERE s="' . $source . '" AND o="' . $target. '"';
+	    $result = $this->_query($sql);
+	    
+	    foreach ($result as $row) {
+	        $found = false;
+	        foreach ($foundPingbackTriples as $triple) {
+	            if ($triple['p'] === $row['p']) {
+	                $found = true;
+	                break;
+	            }
+	        }
+	        
+	        if (!$found) {
+	            $sql = 'DELETE FROM triplify_pingbacks WHERE id=' . $row['id'];
+	            $this->_query($sql);
+	            $this->_sendMail($target, $source, $row['p'], true);
+	        }
+	    }
 	}
 	
 	function _getPingbackTriplesFromRdfXmlString($rdfXml, $sourceUri, $targetUri)
@@ -250,7 +272,7 @@ class PingbackServer extends IXR_Server
 	    return $returnValue;
 	}
 	
-	function _sendMail($target, $source, $removed = false)
+	function _sendMail($target, $source, $relation, $removed = false)
 	{
 	    if ($this->_config['mail']) {
             // Get a mail address for target...

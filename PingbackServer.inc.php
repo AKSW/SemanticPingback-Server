@@ -126,8 +126,10 @@ class PingbackServer extends IXR_Server
 	        }
 		}
 		
-// TODO remove non existing pingbacks
-        if (count($foundPingbackTriples) === 0) {
+        if (count($foundPingbackTriples) === 0) {    
+            $sql = 'DELETE FROM triplify_pingbacks WHERE s="' . $source . '" AND o="' . $target . '"';
+            $this->_query($sql);
+            
             return new IXR_Error(0x0011, 'No links in source document.');
 		}
 		

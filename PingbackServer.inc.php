@@ -155,6 +155,8 @@ class PingbackServer extends IXR_Server
 	
 	function _deleteInvalidPingbacks($source, $target, $foundPingbackTriples = array())
 	{
+	    $this->_checkDb();
+	    
 	    $sql = 'SELECT id, s, p, o FROM triplify_pingbacks WHERE s="' . $source . '" AND o="' . $target. '"';
 	    $result = $this->_query($sql);
 	    

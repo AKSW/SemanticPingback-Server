@@ -155,6 +155,10 @@ class SPServer extends IXR_Server
 	    $sql = 'SELECT id, s, p, o FROM sp_pingbacks WHERE s="' . $source . '" AND o="' . $target. '"';
 	    $result = $this->_query($sql);
 	    
+	    if (!is_array($result)) {
+	        return;
+	    }
+	    
 	    foreach ($result as $row) {
 	        $found = false;
 	        foreach ($foundPingbackTriples as $triple) {
@@ -231,7 +235,7 @@ class SPServer extends IXR_Server
 	    }
 	    
 	    $sql = 'SELECT * FROM sp_pingbacks LIMIT 1';
-	    $result = mysql_query($sql, $this->dbConn);
+	    $result = mysql_query($sql, $this->_dbConn);
 	    if ($result === false) {
 	        $this->_createTable();
 	    }
@@ -248,12 +252,12 @@ class SPServer extends IXR_Server
 	        o  VARCHAR(255) COLLATE ascii_bin NOT NULL
 	    );';
 	    
-	    return mysql_query($sql, $this->dbConn);
+	    return mysql_query($sql, $this->_dbConn);
 	}
 	
 	function _query($sql)
 	{
-	    $result = mysql_query($sql, $this->dbConn);
+	    $result = mysql_query($sql, $this->_dbConn);
 	    if (!$result) {
 	        return false;
 	    }

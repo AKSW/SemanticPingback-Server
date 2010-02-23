@@ -1,6 +1,13 @@
 <?php
-//require_once '../config.inc.php';
-require_once('PingbackServer.inc.php');
+if (!is_readable('config.inc.php')) {
+    echo '<pre>No config.inc.php file or config file not readable.</pre>';
+    exit;
+}
+
+$config = array();
+require_once('config.inc.php');
+
+require_once('classes/SPServer.inc.php');
 
 define('XMLRPC_REQUEST', true);
 
@@ -17,13 +24,5 @@ if ( !isset( $HTTP_RAW_POST_DATA ) ) {
 if ( isset($HTTP_RAW_POST_DATA) )
 	$HTTP_RAW_POST_DATA = trim($HTTP_RAW_POST_DATA);
 
-$config = array(
-    'allow_ext_target' => true,
-    'mail' => true
-);
-
-$db=mysql_connect('localhost','user','pw');
-mysql_select_db('pingbacks');
-
-$server = new PingbackServer($db, $config);
+$server = new SPServer($config);
 $server->serveRequest();

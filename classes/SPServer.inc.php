@@ -236,7 +236,7 @@ class SPServer extends IXR_Server
 	    
 	    $sql = 'SELECT * FROM sp_pingbacks LIMIT 1';
 	    $result = mysql_query($sql, $this->_dbConn);
-	    if ($result === false) {
+	    if (!$result) {
 	        $this->_createTable();
 	    }
 	    

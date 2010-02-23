@@ -1,7 +1,8 @@
 <?php
 
 # Database configuration
-$config['db'] = mysql_connect('localhost','ow','ow', 'test');
+$config['db'] = mysql_connect('localhost','ow','ow');
+mysql_select_db('test');
 
 # Target configuration
 $config['target_allow_external'] = true; // Must be true, if used as a service for external target URIs

@@ -30,7 +30,7 @@ class SPServer extends IXR_Server
 
 	function serveRequest() 
 	{
-		$this->IXR_Server($this->methods);
+		$this->IXR_Server($this->_methods);
 	}
 	
 	function pingback_ping($args) 

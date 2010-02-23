@@ -239,6 +239,10 @@ class SPServer extends IXR_Server
 	    if (!$result) {
 	        $this->_createTable();
 	    }
+	    $result = mysql_query($sql, $this->_dbConn);
+	    if (!$result) {
+	        throw new Exception('DB check failed.');
+	    }
 	    
 	    $this->_dbChecked = true;
 	}

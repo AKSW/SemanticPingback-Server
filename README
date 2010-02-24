@@ -1,0 +1,25 @@
+README
+
+To setup the Semantic Pingback server follow these steps:
+
+1. Place the contents of this folder into your Web application directory on 
+   your Web server.
+2. Copy the distributed configuration file (config.inc.php-dist) to 
+   config.inc.php. Open the file in a text editor and adjust the settings
+   to fit your configuration. At least a valid database connection needs
+   to be supplied. If you want to use the mail feature, make sure that
+   your PHP environment is configured to send emails.
+3. Congratulations! Your Semantic Pingback is ready to receive Pingbacks now.
+   You should now start propagationg the URL of the service. If you place the
+   files in a directory like <Web-Root>/pingback/ and consequently the 
+   index.php file is situated in <Web-Root/pingback/index.php, your server is
+   available through the URL http://example.org/pingback/ (where example.org
+   needs to be replaced with your domain).
+
+
+Triplify is developed by the AKSW research group (http://aksw.org) with
+community contributions and licensed under GPL.
+
+Further information regarding Triplify can be found at:
+http://aksw.org/Projects/SemanticPingback
+

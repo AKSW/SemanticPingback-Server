@@ -1,4 +1,13 @@
 <?php
+/**
+ * This file contains a template based mailer for the Semantic Pingback server.
+ *
+ * @author     Philipp Frischmuth <pfrischmuth@googlemail.com>
+ * @copyright  Copyright (c) 2010, {@link http://aksw.org AKSW}
+ * @license    http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
+ * @version    $Id: $
+ */
+
 require_once 'classes/SPRdfXmlParser.inc.php';
 
 class SPMailer

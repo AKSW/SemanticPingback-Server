@@ -1,4 +1,13 @@
 <?php
+/**
+ * This is the main file of the Semantic Pingback server implementation.
+ *
+ * @author     Philipp Frischmuth <pfrischmuth@googlemail.com>
+ * @copyright  Copyright (c) 2010, {@link http://aksw.org AKSW}
+ * @license    http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
+ * @version    $Id: $
+ */
+
 if (!is_readable('config.inc.php')) {
     echo '<pre>No config.inc.php file or config file not readable.</pre>';
     exit;
@@ -6,8 +15,6 @@ if (!is_readable('config.inc.php')) {
 
 $config = array();
 require_once('config.inc.php');
-
-require_once('classes/SPServer.inc.php');
 
 define('XMLRPC_REQUEST', true);
 
@@ -24,5 +31,7 @@ if ( !isset( $HTTP_RAW_POST_DATA ) ) {
 if ( isset($HTTP_RAW_POST_DATA) )
 	$HTTP_RAW_POST_DATA = trim($HTTP_RAW_POST_DATA);
 
+// Serve the XML-RPC request.
+require_once('classes/SPServer.inc.php');
 $server = new SPServer($config);
 $server->serveRequest();

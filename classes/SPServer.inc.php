@@ -1,4 +1,13 @@
 <?php
+/**
+ * This file contains the Semantic Pingback XML-RPC server.
+ *
+ * @author     Philipp Frischmuth <pfrischmuth@googlemail.com>
+ * @copyright  Copyright (c) 2010, {@link http://aksw.org AKSW}
+ * @license    http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
+ * @version    $Id: $
+ */
+
 require_once 'libraries/class-IXR.php';
 require_once 'classes/SPRdfXmlParser.inc.php';
 
@@ -15,14 +24,16 @@ class SPServer extends IXR_Server
     
     public function __construct($config = array())
     {
+        if (!isset($config['db'])) {
+            throw new Exception('No database connection was configured.');
+        }
         $this->_dbConn = $config['db'];
         
         $defaultConfig = array(
 		    'target_allow_external' => false,
 		    'mail_send' => false,
 		    'mail_copyToSource' => false,
-		    'mail_subject' => 'Semantic Pingback',
-		    'mail_text' => 'Hi, <br /><br /> a new link to one of your resources has been established. See details below.'
+		    'mail_subject' => 'Semantic Pingback'
 		);
 		
 		$this->_config = array_merge($defaultConfig, $config);

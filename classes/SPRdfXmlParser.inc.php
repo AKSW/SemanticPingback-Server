@@ -1,4 +1,14 @@
 <?php
+/**
+ * This file contains a RDF/XML parser. The parser class is derived from
+ * the Erfurt Semantic Web API.
+ *
+ * @author     Philipp Frischmuth <pfrischmuth@googlemail.com>
+ * @copyright  Copyright (c) 2010, {@link http://aksw.org AKSW}
+ * @license    http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
+ * @version    $Id: $
+ */
+
 define('RDF_NS', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#');
 define('XML_NS', 'http://www.w3.org/XML/1998/namespace');
 define('RDF_TYPE', RDF_NS.'type');

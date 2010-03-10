@@ -1,0 +1,120 @@
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta name="keywords" content="Public AKSW Semantic Pingback Server" />
+	<meta http-equiv="content-type" content="text/html; charset=utf8" />
+ 	<link rel="stylesheet" type="text/css" href="http://aksw.org/themes/aksw2007/../default/css/default.css.php" />
+    <link media="screen,projection" rel="stylesheet" type="text/css" href="http://aksw.org/themes/aksw2007/layout/aksw.css" />
+	<link media="print" rel="stylesheet" type="text/css" href="http://aksw.org/themes/aksw2007/layout/print.css" />
+	<title>Semantic Pingback Service</title>
+	<link rel="shortcut icon" href="http://aksw.org/themes/aksw2007/icons/favicon.ico" type="image/x-icon" />
+</head>
+<body>
+
+<div id="borderleft">
+	<div id="borderright">
+	<div id="site">
+		<div id="header">
+			<a href="http://aksw.org" class="title">AKSW</a>
+			<ul id="accessmenu">
+				<li><a href="#content">zum Seiteninhalt spingen</a></li>
+
+				<li><a href="#navigation">zur Navigation springen</a></li>
+				<li id="search">
+                    <form action="http://aksw.org/TextSearch"  method="get" >
+                        <fieldset>
+                            <label for="phrase">Search: </label>
+                            <input type="text" name="phrase" id="phrase" size="15" class="textinput" /><input  class="submitinput onlyAural" type="submit" value="&raquo;" alt="Search!" title="Search!" />
+                        </fieldset>
+                    </form>
+                </li>
+			</ul>
+			<ul id="metamenu">
+				<li><a href="http://aksw.org">AKSW Home</a></li>
+				<li><a href="http://blog.aksw.org/">Blog</a></li>
+				<li><a href="http://InfAI.org">InfAI</a></li>
+			</ul>
+		</div>
+
+        <div id="content">
+            <div class="teaser">
+                <div>
+                    <div>
+                        <h1>AKSW Semantic Pingback Service</h1>
+                        <p class="tagline">Adding a social dimension to the Linked Data Web.</p>
+                        <p>The <a href="http://aksw.org/Projects/SemanticPingback">Semantic Pingback mechanism</a> is an extension of the well-known Pingback method, a technological cornerstone of the blogosphere, thus supporting the interlinking within the Data Web.</p>
+                        <p>This Standalone Semantic Pingback Service can be used to pingback-enable Semantic Web (and other) resources.</p>
+                    </div>
+                </div>
+            </div>
+            <hr class="teaserhr" />
+            
+            <h2>How to use it with your resources / receive a pingback?</h2>
+            <p>
+                In order to use this service for one of your resources (e.g. a FOAF profile) you can propagate the use of the AKSW Semantic Pingback service in two ways:
+                <ul>
+                    <li>Return a <code>X-Pingback: <?php echo SERVICE_URI ?></code> HTTP header field,
+                        when your resource is requested.
+                        This solution is downward compatible with the conventional Pingback mechanism,
+                        since this method is part of the autodiscovery process.
+                        On a apache webserver, you could create a <code>.htaccess</code> file with the
+                        following code: <code>Header set X-Pingback "<?php echo SERVICE_URI ?>"</code>.
+                    </li>
+                    <li>Embed a <code>http://purl.org/net/pingback/service</code> statement into your FOAF
+                        profile, that links your WebID with the URL of the service (see example below).
+                        This solution only works with Semantic Pingback clients, since this autodiscovery
+                        mechanism is not included in the original Pingback specification.
+                        <br />
+                        <textarea class="code" rows="8" cols="80" readonly="readonly">&lt;!-- ... --&gt;
+
+&lt;foaf:Person rdf:about="http://example.org/foaf.rdf#me"&gt;
+   &lt;pingback:service rdf:resource="<?php echo SERVICE_URI ?>" /&gt;
+&lt;/foaf:Person&gt;
+
+&lt;!-- ... --&gt;</textarea>
+                    </li>
+                </ul>
+            </p>
+
+            <h2>How to test Semantic Pingback / send a pingback?</h2>
+            <p>You can ping this service by adding a link or an object relation to one of your resources
+                and start the pingback manually by entering your source resource.
+            </p>
+            <form>
+                <input type="text" size="30" name="source"/> (Source Resource)<br/>
+                <input type="text" size="30" name="target" value="<?php echo SERVICE_URI ?>" /> (Target Resource)<br/>
+                <input type="submit" value="Send Pingback" />
+            </form>
+            
+                <?php
+                if (count($data['pings']) > 0) { ?>
+                    <p>Here is a list of the last 10 Pingbacks to <code><?php echo SERVICE_URI ?></code>.
+                        links_to predicates typically indicate a HTML-link while every other predicate is
+                        from an RDF resource or RDFa encoded in a webpage.
+                    </p>
+                    <table><tr><th>source</th><th>predicate</th></tr>
+                    <?php
+                    foreach ($data['pings'] as $ping) {
+                        $source = $ping[s];
+                        $predicate = $ping[p];
+                        echo '<tr>';
+                        echo "<td><a href='$source'>$source</a></td>";
+                        echo "<td><a href='$predicate'>$predicate</a></td>";
+                        echo '</tr>';
+                    }
+                    ?>
+                    </table>
+                <?php
+                }
+                ?>
+        </div>
+    </div>
+    </div>
+</div>
+
+
+
+</body>
+</html>

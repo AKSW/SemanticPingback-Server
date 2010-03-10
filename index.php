@@ -18,6 +18,12 @@ require_once('config.inc.php');
 
 define('XMLRPC_REQUEST', true);
 
+// TODO split after ? in REQUEST_URI
+$SERVICE_URIsplit = explode ( '?' ,'http://'.$_SERVER["HTTP_HOST"].$_SERVER["REQUEST_URI"] );
+define('SERVICE_URI', $SERVICE_URIsplit[0]);
+
+header('X-Pingback: '.SERVICE_URI);
+
 // Some browser-embedded clients send cookies. We don't want them.
 $_COOKIE = array();
 
@@ -28,10 +34,25 @@ if ( !isset( $HTTP_RAW_POST_DATA ) ) {
 }
 
 // fix for mozBlog and other cases where '<?xml' isn't on the very first line
-if ( isset($HTTP_RAW_POST_DATA) )
+if ( isset($HTTP_RAW_POST_DATA) ) {
 	$HTTP_RAW_POST_DATA = trim($HTTP_RAW_POST_DATA);
+}
 
-// Serve the XML-RPC request.
-require_once('classes/SPServer.inc.php');
-$server = new SPServer($config);
-$server->serveRequest();
+if ( (isset($HTTP_RAW_POST_DATA)) && (strlen($HTTP_RAW_POST_DATA) > 0 )) {
+    // Serve the XML-RPC request.
+    require_once('classes/SPServer.inc.php');
+    $server = new SPServer($config);
+    $server->serveRequest();
+} else {
+    // if it is not a XML-RPC request: serve the webpage
+
+    // Query for all pingbacks to this service
+    $servicePingsQuery = 'SELECT s,p FROM sp_pingbacks WHERE o="'.SERVICE_URI.'" ORDER BY id DESC LIMIT 0 , 10';
+    $servicePingsResult = @mysql_query($servicePingsQuery, $config['db']);
+    if ($servicePingsResult) {
+        while ($row = mysql_fetch_assoc($servicePingsResult)) {
+             $data['pings'][] = $row;
+	    }
+    }
+    include 'templates/index.phtml';
+}

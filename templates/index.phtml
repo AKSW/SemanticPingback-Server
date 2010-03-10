@@ -94,18 +94,17 @@
                         links_to predicates typically indicate a HTML-link while every other predicate is
                         from an RDF resource or RDFa encoded in a webpage.
                     </p>
-                    <table><tr><th>source</th><th>predicate</th></tr>
+                    <ul>
                     <?php
                     foreach ($data['pings'] as $ping) {
                         $source = $ping[s];
                         $predicate = $ping[p];
-                        echo '<tr>';
-                        echo "<td><a href='$source'>$source</a></td>";
-                        echo "<td><a href='$predicate'>$predicate</a></td>";
-                        echo '</tr>';
+                        echo "<li><a href='$source'>$source</a> ";
+                        echo "(Predicate: <a href='$predicate'>$predicate</a>)";
+                        echo '</li>';
                     }
                     ?>
-                    </table>
+                    </ul>
                 <?php
                 }
                 ?>

@@ -79,15 +79,9 @@
             </p>
 
             <h2>How to test Semantic Pingback / send a pingback?</h2>
-            <p>You can ping this service by adding a link or an object relation to one of your resources
-                and start the pingback manually by entering your source resource.
+            <p>You can ping this service by adding a HTML link to this service to one of your resources
+                and start the pingback manually by using <a href="http://www.solitude.dk/ping/client.php">this web-pingback client</a>.
             </p>
-            <form>
-                <input type="text" size="30" name="source"/> (Source Resource)<br/>
-                <input type="text" size="30" name="target" value="<?php echo SERVICE_URI ?>" /> (Target Resource)<br/>
-                <input type="submit" value="Send Pingback" />
-            </form>
-            
                 <?php
                 if (count($data['pings']) > 0) { ?>
                     <p>Here is a list of the last 10 Pingbacks to <code><?php echo SERVICE_URI ?></code>.

@@ -1,4 +1,8 @@
 CHANGELOG
 
-V0.1 (24-02-2010)
+v0.2 (11-03-2010)
+ * index page for non xmlrpc request
+ * shipped with schema.sql (sorry)
+
+v0.1 (24-02-2010)
  * initial public release

@@ -42,7 +42,14 @@ if ( (isset($HTTP_RAW_POST_DATA)) && (strlen($HTTP_RAW_POST_DATA) > 0 )) {
     // Serve the XML-RPC request.
     require_once('classes/SPServer.inc.php');
     $server = new SPServer($config);
-    $server->serveRequest();
+
+    // here we switch between the classic XMLRPC ping and the post ping
+    if (isset($_POST['source']) && isset($_POST['target']) ) {
+        $server->pingback_ping( array($_POST['source'], $_POST['target']) );
+    } else {
+        $server->serveRequest();
+    }
+
 } else {
     // if it is not a XML-RPC request: serve the webpage
 

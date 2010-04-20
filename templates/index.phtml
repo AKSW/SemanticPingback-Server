@@ -44,8 +44,12 @@
                     <div>
                         <h1>AKSW Semantic Pingback Service</h1>
                         <p class="tagline">Adding a social dimension to the Linked Data Web.</p>
-                        <p>The <a href="http://aksw.org/Projects/SemanticPingback">Semantic Pingback mechanism</a> is an extension of the well-known Pingback method, a technological cornerstone of the blogosphere, thus supporting the interlinking within the Data Web.</p>
-                        <p>This Standalone Semantic Pingback Service can be used to pingback-enable Semantic Web (and other) resources.</p>
+                        <p>The <a href="http://aksw.org/Projects/SemanticPingback">Semantic Pingback mechanism</a>
+                            is an extension of the well-known Pingback method, a technological
+                            cornerstone of the blogosphere, thus supporting the interlinking
+                            within the Data Web.</p>
+                        <p>This Standalone Semantic Pingback Service can be used
+                            to pingback-enable Semantic Web (and other) resources.</p>
                     </div>
                 </div>
             </div>
@@ -53,24 +57,36 @@
             
             <h2>How to use it with your resources / receive a pingback?</h2>
             <p>
-                In order to use this service for one of your resources (e.g. a FOAF profile) you can propagate the use of the AKSW Semantic Pingback service in two ways:
+                In order to use this service for one of your resources (e.g.
+                your WebID) you can propagate the use of the AKSW Semantic
+                Pingback service in two ways:
                 <ul>
-                    <li>Return a <code>X-Pingback: <?php echo SERVICE_URI ?></code> HTTP header field,
-                        when your resource is requested.
-                        This solution is downward compatible with the conventional Pingback mechanism,
-                        since this method is part of the autodiscovery process.
-                        On a apache webserver, you could create a <code>.htaccess</code> file with the
-                        following code: <code>Header set X-Pingback "<?php echo SERVICE_URI ?>"</code>.
+                    <li>Return a <code>X-Pingback: <?php echo SERVICE_URI ?></code>
+                        HTTP header field, when your resource is requested.
+                        This solution is downward compatible with the conventional
+                        Pingback mechanism, since this method is part of the
+                        autodiscovery process.
+                        On a apache webserver, you could create a <code>.htaccess</code>
+                        file with the following code: <code>Header set X-Pingback
+                            "<?php echo SERVICE_URI ?>"</code>.
                     </li>
-                    <li>Embed a <code>http://purl.org/net/pingback/service</code> statement into your FOAF
-                        profile, that links your WebID with the URL of the service (see example below).
-                        This solution only works with Semantic Pingback clients, since this autodiscovery
-                        mechanism is not included in the original Pingback specification.
+                    <li>Embed a <code><acronym title="http://purl.org/net/pingback/">pingback</acronym>:service</code>
+                        or <code><acronym title="http://purl.org/net/pingback/">pingback</acronym>:to</code>
+                        statement into your FOAF profile, that links your WebID
+                        with the URL of the service (see example below). This
+                        solution only works with Semantic Pingback clients,
+                        since this autodiscovery mechanism is not included in
+                        the original Pingback specification.
+                        <code><acronym title="http://purl.org/net/pingback/">pingback</acronym>:service</code>
+                        links to a traditional Pingback 1.0 Server, while
+                        <code><acronym title="http://purl.org/net/pingback/">pingback</acronym>:to</code>
+                        links to a server which accepts a simplified pingback request
+                        (this Pingback server can accept both).
                         <br />
                         <textarea class="code" rows="8" cols="80" readonly="readonly">&lt;!-- ... --&gt;
 
 &lt;foaf:Person rdf:about="http://example.org/foaf.rdf#me"&gt;
-   &lt;pingback:service rdf:resource="<?php echo SERVICE_URI ?>" /&gt;
+   &lt;pingback:to rdf:resource="<?php echo SERVICE_URI ?>" /&gt;
 &lt;/foaf:Person&gt;
 
 &lt;!-- ... --&gt;</textarea>
@@ -79,8 +95,17 @@
             </p>
 
             <h2>How to test Semantic Pingback / send a pingback?</h2>
-            <p>You can ping this service by adding a HTML link to this service to one of your resources
-                and start the pingback manually by using <a href="http://www.solitude.dk/ping/client.php">this web-pingback client</a>.
+            <p>You can ping this service by adding a HTML link to this service to
+                one of your resources and start the pingback manually by using
+                <a href="http://www.solitude.dk/ping/client.php">this web-pingback client</a>.</p>
+            <p>In addition to this, you can type the source and target resource
+                URLs directly into these input fields:
+                <form method="post">
+                    <input style="width: 20em;" type="input" /> (source resource, e.g. <i>your</i> WebID)<br />
+                    <input style="width: 20em;" type="input" /> (target resource, e.g. <i>your new friends</i> WebID)<br />
+                    <input type="submit" value="request pingback" />
+                </form>
+                Note: This pingback server does not modify
             </p>
                 <?php
                 if (count($data['pings']) > 0) { ?>

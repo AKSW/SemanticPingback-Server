@@ -40,16 +40,26 @@
     		
     		<div id="content">
 
+            <div class="teaser">
+                <div>
+                    <div>
+                        <h1>AKSW Semantic Pingback Service</h1>
+                        <p class="tagline">Adding a social dimension to the Linked Data Web.</p>
+                    </div>
+                </div>
+            </div>
+            <hr class="teaserhr" />
             <?php if ($result instanceof IXR_Error): ?>
                 The following error occurred:
             <div style="border: 1px solid #f66; background-color: #fcc; width: 60%; padding: 5px; margin:.5em 0 2em 0">
                 <?php echo $result->message; ?>
             </div>
-            <?php else: ?>
+            <?php elseif ( isset($result) ): ?>
             <div style="border: 1px solid #6f6; background-color: #cfc; width: 60%; padding: 5px; margin:.5em 0 2em 0">
                 <?php echo $result; ?>
             </div>
             <?php endif; ?>
+<?php include 'form.phtml' ?>
             
             </div>
             

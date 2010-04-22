@@ -54,6 +54,35 @@
                 </div>
             </div>
             <hr class="teaserhr" />
+
+            <h2>How to test Semantic Pingback / send a pingback?</h2>
+            <p>You can ping this service by adding a HTML link to this service to
+                one of your resources and start the pingback manually by using
+                <a href="http://www.solitude.dk/ping/client.php">this web-pingback client</a>.</p>
+            <p>In addition to this, you can type the source and target resource
+                URLs directly into these input fields:
+<?php include 'form.phtml' ?>
+            </p>
+                <?php
+                if (count($data['pings']) > 0) { ?>
+                    <p>Here is a list of the last 10 Pingbacks to <code><?php echo SERVICE_URI ?></code>.
+                        links_to predicates typically indicate a HTML-link while every other predicate is
+                        from an RDF resource or RDFa encoded in a webpage.
+                    </p>
+                    <ul>
+                    <?php
+                    foreach ($data['pings'] as $ping) {
+                        $source = $ping[s];
+                        $predicate = $ping[p];
+                        echo "<li><a href='$source'>$source</a> ";
+                        echo "(Predicate: <a href='$predicate'>$predicate</a>)";
+                        echo '</li>';
+                    }
+                    ?>
+                    </ul>
+                <?php
+                }
+                ?>
             
             <h2>How to use it with your resources / receive a pingback?</h2>
             <p>
@@ -94,55 +123,6 @@
                 </ul>
             </p>
 
-            <h2>How to test Semantic Pingback / send a pingback?</h2>
-            <p>You can ping this service by adding a HTML link to this service to
-                one of your resources and start the pingback manually by using
-                <a href="http://www.solitude.dk/ping/client.php">this web-pingback client</a>.</p>
-            <p>In addition to this, you can type the source and target resource
-                URLs directly into these input fields:
-                
-                <form method="post" style="margin: 2em 0 1em 0">
-                    <table>
-                        <tr>
-                            <td><input name="source" type="text" size="60" style="width: 30em; border: 1px solid #999; height: 18px; background-color: #eee"/></td>
-                            <td style="font-size: .9em;">(source resource, e.g. <i>your</i> WebID)</td>
-                        </tr>
-                        <tr>
-                            <td><input name="target" type="text" size="60" style="width: 30em; border: 1px solid #999; height: 18px; margin-top: 8px; background-color: #eee" /></td>
-                            <td style="font-size: .9em; padding-top: 7px">(target resource, e.g. <i>your new friends</i> WebID)</td>
-                        </tr>
-                        <tr>
-                            <td><textarea name="comment" cols="80" rows="5" style="width: 30em; max-width: 30em; border: 1px solid #999; margin-top: 8px; background-color: #eee"></textarea></td>
-                            <td style="font-size: .9em; vertical-align: top; padding-top: 10px">(optional comment)</td>         
-                        </tr>
-                        <tr>
-                            <td><input type="submit" value="Request Pingback" /></td>
-                            <td></td>
-                        </tr>
-                    </table>
-                </form>
-                Note: This pingback server does not modify
-            </p>
-                <?php
-                if (count($data['pings']) > 0) { ?>
-                    <p>Here is a list of the last 10 Pingbacks to <code><?php echo SERVICE_URI ?></code>.
-                        links_to predicates typically indicate a HTML-link while every other predicate is
-                        from an RDF resource or RDFa encoded in a webpage.
-                    </p>
-                    <ul>
-                    <?php
-                    foreach ($data['pings'] as $ping) {
-                        $source = $ping[s];
-                        $predicate = $ping[p];
-                        echo "<li><a href='$source'>$source</a> ";
-                        echo "(Predicate: <a href='$predicate'>$predicate</a>)";
-                        echo '</li>';
-                    }
-                    ?>
-                    </ul>
-                <?php
-                }
-                ?>
         </div>
     </div>
     </div>

@@ -5,7 +5,6 @@
  * @author     Philipp Frischmuth <pfrischmuth@googlemail.com>
  * @copyright  Copyright (c) 2010, {@link http://aksw.org AKSW}
  * @license    http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
- * @version    $Id: $
  */
 ?>
 
@@ -35,7 +34,7 @@
   <?php if (isset($this->sourceInfo['title'])): ?>
     <a href="<?php echo $this->sourceInfo['uri']; ?>" style="text-decoration: none; font-weight: bold; color: <?php echo $this->linkColor; ?>"><?php echo $this->sourceInfo['title']; ?></a> is the resource that contains the link.
   <?php elseif (isset($this->sourceInfo['uri'])): ?>
-    You can view the resource containing the link by clicking on the following link: <a href="<?php echo $sourceInfo['uri']; ?>" style="text-decoration: none; font-weight: bold; color: <?php echo $this->linkColor; ?>">Source Resource</a>
+    You can view the resource containing the link by clicking on the following link: <a href="<?php echo $this->sourceInfo['uri']; ?>" style="text-decoration: none; font-weight: bold; color: <?php echo $this->linkColor; ?>">Source Resource</a>
   <?php endif; ?>
   <br />
   
@@ -55,4 +54,12 @@
     </div>
   </div>
   <?php echo $this->bye; ?>
+
+  <div>
+
+      PS: Here are the web addresses (URIs) of all involved resources:
+      subject:   <?php echo $this->sourceInfo['uri']; ?>
+      predicate: <?php echo $this->relInfo['uri']; ?>
+      object:    <?php echo $this->targetInfo['uri']; ?>
+  </div>
 </div>

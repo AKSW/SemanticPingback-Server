@@ -5,7 +5,6 @@
  * @author     Philipp Frischmuth <pfrischmuth@googlemail.com>
  * @copyright  Copyright (c) 2010, {@link http://aksw.org AKSW}
  * @license    http://opensource.org/licenses/gpl-license.php GNU General Public License (GPL)
- * @version    $Id: $
  */
 
 if (!is_readable('config.inc.php')) {
@@ -52,6 +51,9 @@ if ( (isset($HTTP_RAW_POST_DATA)) && (strlen($HTTP_RAW_POST_DATA) > 0 )) {
         $server->serveRequest();
     }
 
+} else if ( isset($_GET['source']) || isset($_GET['target']) || isset($_GET['comment']) ) {
+    include 'templates/success.phtml';
+    exit;
 } else {
     // if it is not a XML-RPC request: serve the webpage
 

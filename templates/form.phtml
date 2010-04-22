@@ -1,0 +1,75 @@
+<?php
+    if (isset($_POST['target'])) {
+        $target = $_POST['target'];
+    } else if (isset($_GET['target'])) {
+        $target = $_GET['target'];
+    } else {
+        $target = "";
+    }
+    if (isset($_POST['source'])) {
+        $source = $_POST['source'];
+    } else if (isset($_GET['source'])) {
+        $source = $_GET['source'];
+    } else {
+        $source = "";
+    }
+    if (isset($_POST['comment'])) {
+        $comment = $_POST['comment'];
+    } else if (isset($_GET['comment'])) {
+        $comment = $_GET['comment'];
+    } else {
+        $comment = "";
+    }
+?>
+
+            <form method="post" style="margin: 2em 0 1em 0">
+                    <table>
+                        <tr>
+                            <td><input name="source" type="text" maxlength="255"
+                                       style="width: 25em; border: 1px solid #999; height: 18px; background-color: #eee"
+                                       value="<?php echo $source ?>"/>
+                            </td>
+                            <td style="padding-left: 0.5em">(source resource,
+                                e.g. <em>your <a href="http://esw.w3.org/WebID">WebID</a></em>)</td>
+                        </tr>
+                        <tr>
+                            <td><input name="target" type="text" maxlength="255"
+                                       style="width: 25em; border: 1px solid #999; height: 18px; margin-top: 8px; background-color: #eee"
+                                       value="<?php echo $target ?>"/>
+                            </td>
+                            <td style="padding-top: 0.2em; padding-left: 0.5em">
+                                (target resource, e.g. <em>your new friends <a href="http://esw.w3.org/WebID">WebID</a></em>)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><textarea name="comment" cols="80" rows="3"
+                                          style="width: 25em; max-width: 30em; border: 1px solid #999; margin-top: 8px; background-color: #eee"><?php echo $comment ?></textarea></td>
+                            <td style="width: 30em; vertical-align: top; padding-top: 0.2em; padding-left: 0.5em">(optional comment)</td>
+                        </tr>
+                        <tr>
+                            <td><input type="submit" value="Request Pingback" /> (<a href="<?php echo SERVICE_URI ?>">reset</a>)</td>
+                            <td></td>
+                        </tr>
+                    </table>
+                </form>
+                <p>Note: This standalone pingback server does not modify any resource.
+                Instead of this, it tries to identify a mail address which is associated
+                to the target resource and sends an email to this address, informing the owner
+                about the pingback request.</p>
+                <p>Currently, the following properties are used for this:
+                    <ul>
+                        <li>direct <a href="http://xmlns.com/foaf/0.1/mbox">foaf:mbox</a>
+                            property at the target resource (e.g. at a
+                            <a href="http://xmlns.com/foaf/0.1/Person">foaf:Person</a>)</li>
+                        <li>a <a href="http://xmlns.com/foaf/0.1/mbox">foaf:mbox</a>
+                            of a resource which is linked from the target with one
+                            of these properties:
+                            <ul>
+                                <li><a href="http://xmlns.com/foaf/0.1/maker">foaf:maker</a></li>
+                                <li><a href="http://purl.org/dc/terms/creator">dct:creator</a></li>
+                                <li><a href="http://rdfs.org/sioc/ns#has_creator">sioc:has_creator</a></li>
+                                <li><a href="http://rdfs.org/sioc/ns#has_owner">sioc:has_owner</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </p>

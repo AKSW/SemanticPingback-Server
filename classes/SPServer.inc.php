@@ -48,7 +48,20 @@ class SPServer extends IXR_Server
 	{
         $source = $args[0];
         $target = $args[1];
-        
+
+        if ($source == "") {
+            return new IXR_Error(0, 'No source resource given.');
+        }
+        if ($target == "") {
+            return new IXR_Error(0, 'No target resource given.');
+        }
+        if (!$this->_isValidURL($source)) {
+            return new IXR_Error(0, 'Given source resource is not a valid URI.');
+        }
+        if (!$this->_isValidURL($target)) {
+            return new IXR_Error(0, 'Given target resource is not a valid URI.');
+        }
+
         $comment = null;
         if (count($args > 2)) {
             $comment = $args[2];
@@ -69,7 +82,7 @@ class SPServer extends IXR_Server
     		$pos2 = strpos($target, ('https://' . $_SERVER['HTTP_HOST']));
 
     		if (!$pos1 && !$pos2) {
-    		    return new IXR_Error(0, 'Is there no link to us?');
+    		    return new IXR_Error(0, 'Given target is not from this server (disallowed by config).');
     		}
         }
 
@@ -333,4 +346,10 @@ class SPServer extends IXR_Server
 	    
 	    return $triples;
 	}
+
+    /* checks an URI for syntactic correctness */
+    private function _isValidURL($url)
+    {
+        return preg_match('|^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i', $url);
+    }
 }

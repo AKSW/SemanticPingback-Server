@@ -38,6 +38,10 @@
     You can view the resource containing the link by clicking on the following link: <a href="<?php echo $sourceInfo['uri']; ?>" style="text-decoration: none; font-weight: bold; color: <?php echo $this->linkColor; ?>">Source Resource</a>
   <?php endif; ?>
   <br />
+  
+  <?php if (isset($this->comment)): ?>
+  Comment: <?php echo $this->comment; ?><br />
+  <?php endif; ?>
   <div style="padding: 10px; margin: 20px 10px 20px 10px; border-top: 1px solid #ccc; border-bottom: 1px solid #ccc">
     <span>Info about the publisher of the source resource:</span>
     <br />

@@ -31,7 +31,7 @@ class SPMailer
         return null;
     }
     
-    public function sendMail($target, $source, $relation)
+    public function sendMail($target, $source, $relation, $comment = null)
     {
         if ($this->_config['mail_send'] === true) {
             // Try to determine a template
@@ -95,6 +95,10 @@ class SPMailer
                             $headers .= '<' . $cc . '>';
                         }
                     }
+                }
+                
+                if (null !== $comment) {
+                    $this->_templateVars['comment'] = $comment;
                 }
                 
                 if (isset($this->_config['mail_linkColor'])) {

@@ -100,10 +100,26 @@
                 <a href="http://www.solitude.dk/ping/client.php">this web-pingback client</a>.</p>
             <p>In addition to this, you can type the source and target resource
                 URLs directly into these input fields:
-                <form method="post">
-                    <input style="width: 20em;" type="input" /> (source resource, e.g. <i>your</i> WebID)<br />
-                    <input style="width: 20em;" type="input" /> (target resource, e.g. <i>your new friends</i> WebID)<br />
-                    <input type="submit" value="request pingback" />
+                
+                <form method="post" style="margin: 2em 0 1em 0">
+                    <table>
+                        <tr>
+                            <td><input name="source" type="text" size="60" style="width: 30em; border: 1px solid #999; height: 18px; background-color: #eee"/></td>
+                            <td style="font-size: .9em;">(source resource, e.g. <i>your</i> WebID)</td>
+                        </tr>
+                        <tr>
+                            <td><input name="target" type="text" size="60" style="width: 30em; border: 1px solid #999; height: 18px; margin-top: 8px; background-color: #eee" /></td>
+                            <td style="font-size: .9em; padding-top: 7px">(target resource, e.g. <i>your new friends</i> WebID)</td>
+                        </tr>
+                        <tr>
+                            <td><textarea name="comment" cols="80" rows="5" style="width: 30em; max-width: 30em; border: 1px solid #999; margin-top: 8px; background-color: #eee"></textarea></td>
+                            <td style="font-size: .9em; vertical-align: top; padding-top: 10px">(optional comment)</td>         
+                        </tr>
+                        <tr>
+                            <td><input type="submit" value="Request Pingback" /></td>
+                            <td></td>
+                        </tr>
+                    </table>
                 </form>
                 Note: This pingback server does not modify
             </p>

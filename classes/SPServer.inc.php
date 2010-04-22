@@ -48,6 +48,16 @@ class SPServer extends IXR_Server
 	{
         $source = $args[0];
         $target = $args[1];
+        
+        $comment = null;
+        if (count($args > 2)) {
+            $comment = $args[2];
+        }
+        if (null !== $comment) {
+            if (trim($comment) === '') {
+                $comment = null;
+            }
+        }
 	
 		$source = str_replace('&amp;', '&', $source);
 		$target = str_replace('&amp;', '&', $target);
@@ -143,7 +153,7 @@ class SPServer extends IXR_Server
 		        
 		        require_once 'classes/SPMailer.inc.php';
         		$mailer = new SPMailer($this->_config);
-        		$mailer->sendMail($target, $source, $triple['p']);
+        		$mailer->sendMail($target, $source, $triple['p'], $comment);
 		        
 		        $added = true;
 		    }
@@ -275,6 +285,9 @@ class SPServer extends IXR_Server
 	    $result = mysql_query($sql, $this->_dbConn);
 	    if (!$result) {
 	        return false;
+	    }
+	    if (is_bool($result)) {
+	        return $result;
 	    }
 	    $returnValue = array();
 	    while ($row = mysql_fetch_assoc($result)) {

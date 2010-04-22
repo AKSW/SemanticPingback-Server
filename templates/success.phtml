@@ -1,0 +1,63 @@
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta name="keywords" content="Public AKSW Semantic Pingback Server" />
+	<meta http-equiv="content-type" content="text/html; charset=utf8" />
+ 	<link rel="stylesheet" type="text/css" href="http://aksw.org/themes/aksw2007/../default/css/default.css.php" />
+    <link media="screen,projection" rel="stylesheet" type="text/css" href="http://aksw.org/themes/aksw2007/layout/aksw.css" />
+	<link media="print" rel="stylesheet" type="text/css" href="http://aksw.org/themes/aksw2007/layout/print.css" />
+	<title>Semantic Pingback Service</title>
+	<link rel="shortcut icon" href="http://aksw.org/themes/aksw2007/icons/favicon.ico" type="image/x-icon" />
+</head>
+<body>
+
+    <div id="borderleft">
+    	<div id="borderright">
+    	<div id="site">
+    		<div id="header">
+    			<a href="http://aksw.org" class="title">AKSW</a>
+    			<ul id="accessmenu">
+    				<li><a href="#content">zum Seiteninhalt spingen</a></li>
+
+    				<li><a href="#navigation">zur Navigation springen</a></li>
+    				<li id="search">
+                        <form action="http://aksw.org/TextSearch"  method="get" >
+                            <fieldset>
+                                <label for="phrase">Search: </label>
+                                <input type="text" name="phrase" id="phrase" size="15" class="textinput" /><input  class="submitinput onlyAural" type="submit" value="&raquo;" alt="Search!" title="Search!" />
+                            </fieldset>
+                        </form>
+                    </li>
+    			</ul>
+    			<ul id="metamenu">
+    				<li><a href="http://aksw.org">AKSW Home</a></li>
+    				<li><a href="http://blog.aksw.org/">Blog</a></li>
+    				<li><a href="http://InfAI.org">InfAI</a></li>
+    			</ul>
+    		</div>
+    		
+    		<div id="content">
+
+            <?php if ($result instanceof IXR_Error): ?>
+                The following error occurred:
+            <div style="border: 1px solid #f66; background-color: #fcc; width: 60%; padding: 5px; margin:.5em 0 2em 0">
+                <?php echo $result->message; ?>
+            </div>
+            <?php else: ?>
+            <div style="border: 1px solid #6f6; background-color: #cfc; width: 60%; padding: 5px; margin:.5em 0 2em 0">
+                <?php echo $result; ?>
+            </div>
+            <?php endif; ?>
+            
+            </div>
+            
+        </div>
+        </div>
+    </div>
+
+
+
+</body>
+</html>

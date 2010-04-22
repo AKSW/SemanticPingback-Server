@@ -45,7 +45,7 @@ if ( (isset($HTTP_RAW_POST_DATA)) && (strlen($HTTP_RAW_POST_DATA) > 0 )) {
 
     // here we switch between the classic XMLRPC ping and the post ping
     if (isset($_POST['source']) && isset($_POST['target']) ) {
-        $result = $server->pingback_ping( array($_POST['source'], $_POST['target']) );
+        $result = $server->pingback_ping( array($_POST['source'], $_POST['target'], $_POST['comment']) );
         include 'templates/success.phtml';
         exit;
     } else {

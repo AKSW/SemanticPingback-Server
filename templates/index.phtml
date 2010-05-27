@@ -113,11 +113,12 @@
                         (this Pingback server can accept both).
                         <br />
                         <textarea class="code" rows="8" cols="80" readonly="readonly">&lt;!-- ... --&gt;
-
 &lt;foaf:Person rdf:about="http://example.org/foaf.rdf#me"&gt;
-   &lt;pingback:to rdf:resource="<?php echo SERVICE_URI ?>" /&gt;
+   &lt;pingback:to
+        xmlns:pingback="http://purl.org/net/pingback/"
+        rdf:resource="<?php echo SERVICE_URI ?>"
+        /&gt
 &lt;/foaf:Person&gt;
-
 &lt;!-- ... --&gt;</textarea>
                     </li>
                 </ul>

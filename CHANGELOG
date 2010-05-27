@@ -1,5 +1,11 @@
 CHANGELOG
 
+v0.3 (22-04-2010)
+  * support for simplified post request
+  * form output
+  * support for prefilled form (get parameters)
+  * template niceups
+
 v0.2 (11-03-2010)
  * index page for non xmlrpc request
  * shipped with schema.sql (sorry)

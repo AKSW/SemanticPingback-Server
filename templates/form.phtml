@@ -22,7 +22,10 @@
     }
 ?>
 
-            <form method="post" style="margin: 2em 0 1em 0">
+            <form
+                xmlns:ping="http://purl.org/net/pingback/"
+                id="pingform" about="#pingform" typeof="ping:Container"
+                method="post" style="margin: 2em 0 1em 0">
                     <table>
                         <tr>
                             <td><input name="source" type="text" maxlength="255"

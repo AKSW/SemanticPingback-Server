@@ -44,10 +44,12 @@ if ( (isset($HTTP_RAW_POST_DATA)) && (strlen($HTTP_RAW_POST_DATA) > 0 )) {
 
     // here we switch between the classic XMLRPC ping and the post ping
     if (isset($_POST['source']) && isset($_POST['target']) ) {
+        // simplified Semantic Pingback
         $result = $server->pingback_ping( array($_POST['source'], $_POST['target'], $_POST['comment']) );
         include 'templates/success.phtml';
         exit;
     } else {
+        // XML-RPC request
         $server->serveRequest();
     }
 
@@ -58,7 +60,7 @@ if ( (isset($HTTP_RAW_POST_DATA)) && (strlen($HTTP_RAW_POST_DATA) > 0 )) {
     // if it is not a XML-RPC request: serve the webpage
 
     // Query for all pingbacks to this service
-    $servicePingsQuery = 'SELECT s,p FROM sp_pingbacks WHERE o="'.SERVICE_URI.'" ORDER BY id DESC LIMIT 0 , 10';
+    $servicePingsQuery = 'SELECT s,p FROM sp_pingbacks ORDER BY id DESC LIMIT 0 , 10';
     $servicePingsResult = @mysql_query($servicePingsQuery, $config['db']);
     if ($servicePingsResult) {
         while ($row = mysql_fetch_assoc($servicePingsResult)) {

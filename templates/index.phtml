@@ -5,11 +5,11 @@
 <head>
 	<meta name="keywords" content="Public AKSW Semantic Pingback Server" />
 	<meta http-equiv="content-type" content="text/html; charset=utf8" />
- 	<link rel="stylesheet" type="text/css" href="http://aksw.org/themes/aksw2007/../default/css/default.css.php" />
-    <link media="screen,projection" rel="stylesheet" type="text/css" href="http://aksw.org/themes/aksw2007/layout/aksw.css" />
-	<link media="print" rel="stylesheet" type="text/css" href="http://aksw.org/themes/aksw2007/layout/print.css" />
+ 	<link rel="stylesheet" type="text/css" href="http://oldwiki.aksw.org/themes/aksw2007/../default/css/default.css.php" />
+    <link media="screen,projection" rel="stylesheet" type="text/css" href="http://oldwiki.aksw.org/themes/aksw2007/layout/aksw.css" />
+	<link media="print" rel="stylesheet" type="text/css" href="http://oldwiki.aksw.org/themes/aksw2007/layout/print.css" />
 	<title>Semantic Pingback Service</title>
-	<link rel="shortcut icon" href="http://aksw.org/themes/aksw2007/icons/favicon.ico" type="image/x-icon" />
+	<link rel="shortcut icon" href="http://oldwiki.aksw.org/themes/aksw2007/icons/favicon.ico" type="image/x-icon" />
 </head>
 <body>
 
@@ -64,7 +64,7 @@
 <?php include 'form.phtml' ?>
             </p>
                 <?php
-                if (count($data['pings']) > 0) { ?>
+                if (isset($data) && count($data['pings']) > 0) { ?>
                     <p>Here is a list of the last 10 Pingbacks to <code><?php echo SERVICE_URI ?></code>.
                         links_to predicates typically indicate a HTML-link while every other predicate is
                         from an RDF resource or RDFa encoded in a webpage.

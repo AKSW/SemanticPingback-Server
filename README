@@ -20,6 +20,14 @@ To setup the Semantic Pingback server follow these steps:
    available through the URL http://example.org/pingback/ (where example.org
    needs to be replaced with your domain).
 
+If you want to run the Semantic Pingback Server in a docker container:
+
+1. cd docker; docker build -t semanticpingback .
+
+2. cd ..; docker run -it --rm --name pingback -p 8080:80 -v "$PWD":/var/www/html pingback
+
+or similar
+
 
 Semantic Pingback Server is developed by the AKSW research group (http://aksw.org) with
 community contributions and licensed under GPL.

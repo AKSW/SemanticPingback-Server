@@ -1,0 +1,19 @@
+--- config.inc.dist.php	2016-01-26 15:15:35.021911199 +0100
++++ config.inc.php	2016-01-25 01:59:59.758238218 +0100
+@@ -10,13 +10,13 @@
+ 
+ # Database configuration
+ ###############################################################################
+-$config['db'] = mysql_connect('localhost','__user__','__password__');
+-mysql_select_db('__database__');
++$config['db'] = mysql_connect('localhost', 'root', '');
++mysql_select_db('pingback');
+ 
+ # Target configuration
+ ###############################################################################
+ # Set to true if target URIs outside the namespace of the domain are allowed
+-$config['target_allow_external'] = false;
++$config['target_allow_external'] = true;
+ 
+ # Mail configuration
+ ###############################################################################

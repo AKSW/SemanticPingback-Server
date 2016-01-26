@@ -22,11 +22,9 @@ To setup the Semantic Pingback server follow these steps:
 
 If you want to run the Semantic Pingback Server in a docker container:
 
-1. See 2nd step for the normal deployment, in this case the default user is "root" and the default password is blanck, the database name is "pingback"
+1. cd docker; docker build -t semanticpingback .
 
-2. cd docker; docker build -t semanticpingback .
-
-3. cd ..; docker run -it --rm --name pingback -p 8080:80 -v "$PWD":/var/www/html pingback
+2. cd ..; docker run -it --rm --name pingback -p 8080:80 pingback
 
 or similar
 

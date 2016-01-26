@@ -251,35 +251,35 @@ class SPServer extends IXR_Server
 
 	function _getPingbackTriplesFromEasyrdfParser($rdfData, $contentType, $sourceUri, $targetUri)
 	{
-            $graph = new EasyRdf_Graph();
-            $parserType = $this->_easyrdfFormats[$contentType];
-            $result = $graph->parse($rdfData, $parserType, $sourceUri);
-            $rdfPhpArray = $graph->toRdfPhp();
+        $graph = new EasyRdf_Graph();
+        $parserType = $this->_easyrdfFormats[$contentType];
+        $result = $graph->parse($rdfData, $parserType, $sourceUri);
+        $rdfPhpArray = $graph->toRdfPhp();
 
-            return $this->_getPingbackTriplesFromRdfPhpArray($rdfPhpArray, $sourceUri, $targetUri);
-        }
+        return $this->_getPingbackTriplesFromRdfPhpArray($rdfPhpArray, $sourceUri, $targetUri);
+    }
 
-        function _getPingbackTriplesFromRdfPhpArray($rdfPhpArray, $sourceUri, $targetUri)
-        {
-            $foundTriples = array();
-            foreach ($rdfPhpArray as $s => $pArray) {
-                foreach ($pArray as $p => $oArray) {
-                    foreach ($oArray as $oSpec) {
-                        if ($s === $sourceUri) {
-                            if (($oSpec['type'] === 'uri') && ($oSpec['value'] === $targetUri)) {
-                                $foundTriples[] = array(
-                                    's' => $s,
-                                    'p' => $p,
-                                    'o' => $oSpec['value']
-                                );
-                            }
+    function _getPingbackTriplesFromRdfPhpArray($rdfPhpArray, $sourceUri, $targetUri)
+    {
+        $foundTriples = array();
+        foreach ($rdfPhpArray as $s => $pArray) {
+            foreach ($pArray as $p => $oArray) {
+                foreach ($oArray as $oSpec) {
+                    if ($s === $sourceUri) {
+                        if (($oSpec['type'] === 'uri') && ($oSpec['value'] === $targetUri)) {
+                            $foundTriples[] = array(
+                                's' => $s,
+                                'p' => $p,
+                                'o' => $oSpec['value']
+                            );
                         }
                     }
                 }
             }
-
-            return $foundTriples;
         }
+
+        return $foundTriples;
+    }
 
 	function _pingbackExists($s, $p, $o)
 	{

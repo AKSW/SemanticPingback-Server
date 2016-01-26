@@ -20,7 +20,7 @@ $config['target_allow_external'] = false;
 
 # Mail configuration
 ###############################################################################
-$config['mail_send'] = true; 
+$config['mail_send'] = true;
 $config['mail_copyToSource'] = false;
 $config['mail_linkColor'] = '#07c';
 $config['mail_highlightColor'] = '#07c';

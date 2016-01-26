@@ -32,7 +32,7 @@ class SPServer extends IXR_Server
         'application/n-triples' => 'ntriples',
         'application/rdf+json' => 'json',
         'application/rdf+xml' => 'rdfxml',
-        'test/turtle' => 'turtle',
+        'text/turtle' => 'turtle',
     );
 
     public function __construct($config = array())
@@ -107,7 +107,7 @@ class SPServer extends IXR_Server
 		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-		    'Accept: application/rdf+xml'
+		    'Accept: application/rdf+xml, text/turtle, application/n-triples, application/rdf+json'
 		));
 		$result = curl_exec($curl);
 		$info = curl_getinfo($curl);

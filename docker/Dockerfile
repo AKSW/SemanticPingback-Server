@@ -18,6 +18,7 @@ RUN git clone https://github.com/AKSW/SemanticPingback-Server.git /var/www/html
 ADD config.inc.php.patch /
 RUN cp /var/www/html/config.inc.dist.php /var/www/html/config.inc.php
 RUN cd /var/www/html/ ; patch < /config.inc.php.patch
+RUN cd /var/www/html/ ; php -r "readfile('https://getcomposer.org/installer');" | php ; php composer.phar install
 
 EXPOSE 80
 CMD ["/usr/bin/supervisord"]

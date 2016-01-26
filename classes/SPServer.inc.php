@@ -10,8 +10,9 @@
 
 require_once 'libraries/class-IXR.php';
 require_once 'classes/SPRdfXmlParser.inc.php';
+require_once 'vendor/autoload.php';
 
-class SPServer extends IXR_Server 
+class SPServer extends IXR_Server
 {
     private $_config = array();
     private $_dbChecked = false;
@@ -19,32 +20,44 @@ class SPServer extends IXR_Server
     private $_methods = array(
         'pingback.ping' => 'this:pingback_ping'
     );
-    
+
     private $_loadCache = array();
-    
+
+    private $_easyrdfFormats = array(
+        'n-triples' => 'ntriples',
+        'rdf-json' => 'json',
+        'rdf-xml' => 'rdfxml',
+        'rdfa' => 'rdfa',
+        'turtle' => 'turtle',
+        'application/n-triples' => 'ntriples',
+        'application/rdf+json' => 'json',
+        'application/rdf+xml' => 'rdfxml',
+        'test/turtle' => 'turtle',
+    );
+
     public function __construct($config = array())
     {
         if (!isset($config['db'])) {
             throw new Exception('No database connection was configured.');
         }
         $this->_dbConn = $config['db'];
-        
+
         $defaultConfig = array(
 		    'target_allow_external' => false,
 		    'mail_send' => false,
 		    'mail_copyToSource' => false,
 		    'mail_subject' => 'Semantic Pingback'
 		);
-		
+
 		$this->_config = array_merge($defaultConfig, $config);
     }
 
-	function serveRequest() 
+	function serveRequest()
 	{
 		$this->IXR_Server($this->_methods);
 	}
-	
-	function pingback_ping($args) 
+
+	function pingback_ping($args)
 	{
         $source = $args[0];
         $target = $args[1];
@@ -71,7 +84,7 @@ class SPServer extends IXR_Server
                 $comment = null;
             }
         }
-	
+
 		$source = str_replace('&amp;', '&', $source);
 		$target = str_replace('&amp;', '&', $target);
 		$target = str_replace('&', '&amp;', $target);
@@ -87,7 +100,7 @@ class SPServer extends IXR_Server
         }
 
 		$foundPingbackTriples = array();
-		
+
 		// Let's check the remote site
 		$curl = curl_init();
 		curl_setopt($curl, CURLOPT_URL, $source);
@@ -99,17 +112,30 @@ class SPServer extends IXR_Server
 		$result = curl_exec($curl);
 		$info = curl_getinfo($curl);
 		curl_close($curl);
-		if (($info['http_code'] === 200) && (strtolower($info['content_type']) === 'application/rdf+xml')) {
-		    $rdfData = $result;
-		    $triples = $this->_getPingbackTriplesFromRdfXmlString($rdfData, $source, $target);
-		    if (is_array($triples)) {
-                $foundPingbackTriples = $triples;
+
+        $contentType = strtolower($info['content_type']);
+        if ($info['http_code'] === 200) {
+    		if ($contentType === 'application/rdf+xml') {
+    		    $rdfData = $result;
+    		    $triples = $this->_getPingbackTriplesFromRdfXmlString($rdfData, $source, $target);
+    		    if (is_array($triples)) {
+                    $foundPingbackTriples = $triples;
+                }
+    		} elseif ($contentType === 'application/octet-stream' || array_key_exists($contentType, $this->_easyrdfFormats)) {
+                $rdfData = $result;
+                if ($contentType === 'application/octet-stream') {
+                    $contentType = 'turtle';
+                }
+    		    $triples = $this->_getPingbackTriplesFromEasyrdfParser($rdfData, $contentType, $source, $target);
+    		    if (is_array($triples)) {
+                    $foundPingbackTriples = $triples;
+                }
             }
-		}
-		
+        }
+
 		if (count($foundPingbackTriples) === 0) {
 	        $service = 'http://www.w3.org/2007/08/pyRdfa/extract?format=pretty-xml&warnings=false&parser=lax&space-preserve=true&uri=' . urlencode($source);
-	        
+
 	        $curl = curl_init();
     		curl_setopt($curl, CURLOPT_URL, $service);
     		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
@@ -125,7 +151,7 @@ class SPServer extends IXR_Server
                 }
 	        }
 	    }
-	    
+
 	    if (count($foundPingbackTriples) === 0) {
 	        $curl = curl_init();
     		curl_setopt($curl, CURLOPT_URL, $source);
@@ -152,47 +178,47 @@ class SPServer extends IXR_Server
                 }
 	        }
 		}
-		
-        if (count($foundPingbackTriples) === 0) {    
+
+        if (count($foundPingbackTriples) === 0) {
             $this->_deleteInvalidPingbacks($source, $target);
-            
+
             return new IXR_Error(0x0011, 'No links in source document.');
 		}
-		
+
 		$added = false;
 		foreach ($foundPingbackTriples as $triple) {
 		    if (!$this->_pingbackExists($triple['s'], $triple['p'], $triple['o'])) {
 		        $this->_addPingback($triple['s'], $triple['p'], $triple['o']);
-		        
+
 		        require_once 'classes/SPMailer.inc.php';
         		$mailer = new SPMailer($this->_config);
         		$mailer->sendMail($target, $source, $triple['p'], $comment);
-		        
+
 		        $added = true;
 		    }
 		}
-		
+
 		// remove old pingbacks
 		$this->_deleteInvalidPingbacks($source, $target, $foundPingbackTriples);
-			
+
 		if (!$added) {
             return new IXR_Error(0x0030, 'Already exists.');
         }
-       
+
         return 'Pingback registered.';
 	}
-	
+
 	function _deleteInvalidPingbacks($source, $target, $foundPingbackTriples = array())
 	{
 	    $this->_checkDb();
-	    
+
 	    $sql = 'SELECT id, s, p, o FROM sp_pingbacks WHERE s="' . $source . '" AND o="' . $target. '"';
 	    $result = $this->_query($sql);
-	    
+
 	    if (!is_array($result)) {
 	        return;
 	    }
-	    
+
 	    foreach ($result as $row) {
 	        $found = false;
 	        foreach ($foundPingbackTriples as $triple) {
@@ -201,16 +227,16 @@ class SPServer extends IXR_Server
 	                break;
 	            }
 	        }
-	        
+
 	        if (!$found) {
 	            $sql = 'DELETE FROM sp_pingbacks WHERE id=' . $row['id'];
 	            $this->_query($sql);
-	            // TODO 
+	            // TODO
 	            //$this->_sendMail($target, $source, $row['p'], true);
 	        }
 	    }
 	}
-	
+
 	function _getPingbackTriplesFromRdfXmlString($rdfXml, $sourceUri, $targetUri)
 	{
 	    $parser = new SPRdfXmlParser();
@@ -219,9 +245,25 @@ class SPServer extends IXR_Server
 	    } catch (Exception $e) {
 	        return false;
 	    }
-        
+        return $this->_getPingbackTriplesFromRdfPhpArray($result, $sourceUri, $targetUri);
+	}
+
+
+	function _getPingbackTriplesFromEasyrdfParser($rdfData, $contentType, $sourceUri, $targetUri)
+	{
+        $graph = new EasyRdf_Graph();
+        //$parser = new \EasyRdf\Parser(); // \Redland
+        $parserType = $this->_easyrdfFormats[$contentType];
+        $result = $graph->parse($rdfData, $parserType, $sourceUri);
+        var_dump($result);
+        $rdfPhpArray = $graph->toRdfPhp();
+        return $this->_getPingbackTriplesFromRdfPhpArray($rdfPhpArray, $sourceUri, $targetUri);
+    }
+
+    function _getPingbackTriplesFromRdfPhpArray($rdfPhpArray, $sourceUri, $targetUri)
+    {
         $foundTriples = array();
-        foreach ($result as $s => $pArray) {
+        foreach ($rdfPhpArray as $s => $pArray) {
             foreach ($pArray as $p => $oArray) {
                 foreach ($oArray as $oSpec) {
                     if ($s === $sourceUri) {
@@ -232,18 +274,18 @@ class SPServer extends IXR_Server
                                 'o' => $oSpec['value']
                             );
                         }
-                    } 
+                    }
                 }
             }
         }
-        
+
         return $foundTriples;
-	}
-	
+    }
+
 	function _pingbackExists($s, $p, $o)
 	{
 	    $this->_checkDb();
-	    
+
 	    $sql = 'SELECT * FROM sp_pingbacks WHERE s="' . $s . '" AND p="' . $p . '" AND o="' . $o . '"';
 	    $result = $this->_query($sql);
 	    if (!$result) {
@@ -251,23 +293,23 @@ class SPServer extends IXR_Server
 	    } else {
 	        return true;
 	    }
-	    
+
 	}
-	
+
 	function _addPingback($s, $p, $o)
 	{
 	    $this->_checkDb();
-	    
+
 	    $sql = 'INSERT INTO sp_pingbacks (s, p, o) VALUES ("' . $s . '", "' . $p . '", "' . $o . '");';
 	    $this->_query($sql);
 	}
-	
+
 	function _checkDb()
 	{
 	    if ($this->_dbChecked) {
 	        return;
 	    }
-	    
+
 	    $sql = 'SELECT * FROM sp_pingbacks LIMIT 1';
 	    $result = mysql_query($sql, $this->_dbConn);
 	    if (!$result) {
@@ -277,10 +319,10 @@ class SPServer extends IXR_Server
 	    if (!$result) {
 	        throw new Exception('DB check failed.');
 	    }
-	    
+
 	    $this->_dbChecked = true;
 	}
-	
+
 	function _createTable()
 	{
 	    $sql = 'CREATE TABLE IF NOT EXISTS sp_pingbacks (
@@ -289,10 +331,10 @@ class SPServer extends IXR_Server
 	        p  VARCHAR(255) COLLATE ascii_bin NOT NULL,
 	        o  VARCHAR(255) COLLATE ascii_bin NOT NULL
 	    );';
-	    
+
 	    return mysql_query($sql, $this->_dbConn);
 	}
-	
+
 	function _query($sql)
 	{
 	    $result = mysql_query($sql, $this->_dbConn);
@@ -306,20 +348,20 @@ class SPServer extends IXR_Server
 	    while ($row = mysql_fetch_assoc($result)) {
 	        $returnValue[] = $row;
 	    }
-	    
+
 	    if (count($returnValue) === 0) {
 	        return false;
 	    }
-	    
+
 	    return $returnValue;
 	}
-	
+
 	private function _loadRdfXml($uri)
 	{
 	    if (isset($this->_loadCache[$uri])) {
 	        return $this->_loadCache[$uri];
 	    }
-	    
+
 	    $curl = curl_init();
 		curl_setopt($curl, CURLOPT_URL, $uri);
 		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
@@ -330,7 +372,7 @@ class SPServer extends IXR_Server
 		$result = curl_exec($curl);
 		$info = curl_getinfo($curl);
 		curl_close($curl);
-		
+
 		$triples = null;
 		if (($info['http_code'] === 200) && ($info['content_type'] === 'application/rdf+xml')) {
     	    $parser = new SPRdfXmlParser();
@@ -341,9 +383,9 @@ class SPServer extends IXR_Server
     	        return null;
     	    }
 	    }
-	    
+
 	    $this->_loadCache[$uri] = $triples;
-	    
+
 	    return $triples;
 	}
 

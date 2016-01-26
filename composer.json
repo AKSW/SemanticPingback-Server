@@ -1,0 +1,16 @@
+{
+    "name": "aksw/pingback-server",
+    "description": "Semantic Pingback Service Sample Implementation",
+    "type": "project",
+    "require": {
+        "easyrdf/easyrdf": "0.9.1"
+    },
+    "license": "GPL-3.0",
+    "authors": [
+        {
+            "name": "Natanael Arndt",
+            "email": "arndtn@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev"
+}

@@ -16,6 +16,10 @@ $config = array();
 require_once('config.inc.php');
 
 define('XMLRPC_REQUEST', true);
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: POST");
+header("Access-Control-Allow-Headers: X-Requested-With");
+
 
 // TODO split after ? in REQUEST_URI
 $SERVICE_URIsplit = explode ( '?' ,'http://'.$_SERVER["HTTP_HOST"].$_SERVER["REQUEST_URI"] );

@@ -72,10 +72,12 @@
                     <ul>
                     <?php
                     foreach ($data['pings'] as $ping) {
-                        $source = $ping[s];
-                        $predicate = $ping[p];
+                        $source = $ping['s'];
+                        $predicate = $ping['p'];
+                        $target = $ping['o'];
                         echo "<li><a href='$source'>$source</a> ";
-                        echo "(Predicate: <a href='$predicate'>$predicate</a>)";
+                        echo "(Predicate: <a href='$predicate'>$predicate</a>) ";
+                        echo "<a href='$target'>$target</a> ";
                         echo '</li>';
                     }
                     ?>

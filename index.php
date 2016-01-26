@@ -64,7 +64,7 @@ if ( (isset($HTTP_RAW_POST_DATA)) && (strlen($HTTP_RAW_POST_DATA) > 0 )) {
     // if it is not a XML-RPC request: serve the webpage
 
     // Query for all pingbacks to this service
-    $servicePingsQuery = 'SELECT s,p FROM sp_pingbacks ORDER BY id DESC LIMIT 0 , 10';
+    $servicePingsQuery = 'SELECT s,p,o FROM sp_pingbacks ORDER BY id DESC LIMIT 0 , 10';
     $servicePingsResult = @mysql_query($servicePingsQuery, $config['db']);
     if ($servicePingsResult) {
         while ($row = mysql_fetch_assoc($servicePingsResult)) {
